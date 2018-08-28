@@ -91,14 +91,13 @@ import UIKit
     }
     
     //MARK: - Properties
-    var value: Int = 1
+    private(set) var value: Int = 1
     
-    //MARK: - Private
-    var componentLabels = [UILabel]()
-    let componentDimension: CGFloat = 40.0
-    let componentCount: Int = 5
-    let componentActiveColor = UIColor.black
-    let componentInactiveColor = UIColor.gray
+    private var componentLabels = [UILabel]()
+    private let componentDimension: CGFloat = 40.0
+    private let componentCount: Int = 5
+    private let componentActiveColor = UIColor.black
+    private let componentInactiveColor = UIColor.gray
     
 }
 
