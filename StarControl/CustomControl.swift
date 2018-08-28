@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CustomControl: UIControl {
+@IBDesignable class CustomControl: UIControl {
     
     required init? (coder aCoder: NSCoder){
         super.init(coder: aCoder)
@@ -16,7 +16,7 @@ class CustomControl: UIControl {
     }
     
     func setup(){
-        var labels = [UILabel]()
+
         for index in 0...4 {
             //create labels and adds tag
             let x = CGFloat(index)*(componentDimension + 8.0)
@@ -30,7 +30,7 @@ class CustomControl: UIControl {
             newLabel.textColor = index == 0 ? componentActiveColor : componentInactiveColor
             
             addSubview(newLabel)
-            labels.append(newLabel)
+            componentLabels.append(newLabel)
         }
         
     }
@@ -46,6 +46,7 @@ class CustomControl: UIControl {
         updateValue(at: touch)
         return true
     }
+    
     override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         let touchPoint = touch.location(in: self)
         if  bounds.contains(touchPoint){
@@ -56,6 +57,7 @@ class CustomControl: UIControl {
         }
         return true
     }
+    
     override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
         guard let touch = touch else {return}
         let touchPoint = touch.location(in: self)
@@ -66,17 +68,31 @@ class CustomControl: UIControl {
             sendActions(for: [.touchUpOutside])
         }
     }
+    
     override func cancelTracking(with event: UIEvent?) {
         sendActions(for: [.touchCancel])
     }
+    
     func updateValue(at touch: UITouch){
         
+        for label in componentLabels {
+            let touchPoint = touch.location(in: label)
+            if label.bounds.contains(touchPoint){
+                value = label.tag
+                for label in componentLabels{
+                    label.textColor = label.tag <= value ? componentActiveColor : componentInactiveColor
+                }
+                
+                sendActions(for: [.valueChanged])
+            }
+        }
     }
     
     //MARK: - Properties
     var value: Int = 1
     
     //MARK: - Private
+    var componentLabels = [UILabel]()
     let componentDimension: CGFloat = 40.0
     let componentCount: Int = 5
     let componentActiveColor = UIColor.black
