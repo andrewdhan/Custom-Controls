@@ -52,6 +52,7 @@ import UIKit
         if  bounds.contains(touchPoint){
             sendActions(for: [.touchDragInside])
             updateValue(at: touch)
+
         } else {
             sendActions(for: [.touchDragOutside])
         }
@@ -64,6 +65,8 @@ import UIKit
         if bounds.contains(touchPoint){
             sendActions(for: [.touchUpInside])
             updateValue(at: touch)
+            self.performFlare()
+            
         } else {
             sendActions(for: [.touchUpOutside])
         }
@@ -74,15 +77,14 @@ import UIKit
     }
     
     func updateValue(at touch: UITouch){
-        
         for label in componentLabels {
             let touchPoint = touch.location(in: label)
             if label.bounds.contains(touchPoint){
+                if value == label.tag { return}
                 value = label.tag
                 for label in componentLabels{
                     label.textColor = label.tag <= value ? componentActiveColor : componentInactiveColor
                 }
-                
                 sendActions(for: [.valueChanged])
             }
         }
@@ -98,4 +100,16 @@ import UIKit
     let componentActiveColor = UIColor.black
     let componentInactiveColor = UIColor.gray
     
+}
+
+extension UIView {
+    // "Flare view" animation sequence
+    func performFlare() {
+        func flare()   { transform = CGAffineTransform(scaleX: 1.6, y: 1.6) }
+        func unflare() { transform = .identity }
+        
+        UIView.animate(withDuration: 0.3,
+                       animations: { flare() },
+                       completion: { _ in UIView.animate(withDuration: 0.1) { unflare() }})
+    }
 }
